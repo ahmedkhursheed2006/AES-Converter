@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import './App.css';
+import { useState, useEffect } from 'react';
 import InputOutputPanel from './components/InputOutputPanel';
 import KeyInput from './components/KeyInput';
 import ControlPanel from './components/ControlPanel';
@@ -19,17 +19,18 @@ function App() {
   const [mode, setMode] = useState('encrypt'); // 'encrypt' or 'decrypt'
 
   // State for input/output
-  const [plainText, setPlainText] = useState('');
+  const [plainText, setPlainText] = useState('Sir Niaz will give us A Grade');
   const [cipherText, setCipherText] = useState('');
 
   // State for key
-  const [passphrase, setPassphrase] = useState('');
+  const [passphrase, setPassphrase] = useState('Sir Niaz is Love');
   const [key, setKey] = useState(null);
 
   // State for round details
   const [showRoundDetails, setShowRoundDetails] = useState(false);
   const [roundDetails, setRoundDetails] = useState(null);
   const [keyExpansionDetails, setKeyExpansionDetails] = useState(null);
+  const [completeCipherPerRound, setCompleteCipherPerRound] = useState(null);
 
   // State for errors
   const [error, setError] = useState('');
@@ -66,6 +67,7 @@ function App() {
         if (showRoundDetails) {
           setRoundDetails(result.roundDetails);
           setKeyExpansionDetails(result.keyExpansion);
+          setCompleteCipherPerRound(result.completeCipherPerRound);
         }
       } else if (mode === 'decrypt' && cipherText) {
         // Decrypt the cipher text
@@ -79,6 +81,7 @@ function App() {
           if (showRoundDetails) {
             setRoundDetails(result.roundDetails);
             setKeyExpansionDetails(result.keyExpansion);
+            setCompleteCipherPerRound(result.completeCipherPerRound);
           }
         } catch (err) {
           setError('Invalid cipher text or key');
@@ -110,6 +113,7 @@ function App() {
     setKey(null);
     setRoundDetails(null);
     setKeyExpansionDetails(null);
+    setCompleteCipherPerRound(null);
     setError('');
   };
 
@@ -161,6 +165,7 @@ function App() {
           <RoundDetailsViewer
             roundDetails={roundDetails}
             keyExpansion={keyExpansionDetails}
+            completeCipherPerRound={completeCipherPerRound}
             mode={mode}
           />
         )}

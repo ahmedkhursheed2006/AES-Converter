@@ -189,41 +189,90 @@ export function decryptBlock(block, roundKeys, trackRounds = false) {
  *   - plainBytes: Decrypted data as byte array
  *   - roundDetails: Details of each round (if trackRounds is true)
  *   - keyExpansion: Details of key expansion
+ *   - completeCipherPerRound: Complete plain text after each round (if trackRounds is true)
  */
 export function decryptText(cipherBytes, key, trackRounds = false) {
     // Expand the key
     const { roundKeys, expansionDetails } = expandKey(key);
 
     // Array to hold all decrypted blocks
-    const plainBytes = [];
+    let plainBytes = [];
 
-    // Array to hold round details for all blocks (only track first block to avoid overwhelming data)
+    // Array to hold round details for first block
     let allRoundDetails = [];
 
-    // Process each 16-byte block
-    for (let i = 0; i < cipherBytes.length; i += 16) {
-        const block = cipherBytes.slice(i, i + 16);
+    // Array to track complete plain text after each round (for all blocks)
+    const completeCipherPerRound = trackRounds ? {} : null;
 
-        // Only track rounds for the first block to keep data manageable
-        const shouldTrack = trackRounds && (i === 0);
+    if (trackRounds) {
+        // Process all blocks round by round to track complete plain text
+        const numBlocks = cipherBytes.length / 16;
+        const blockStates = [];
 
-        const { decryptedBlock, roundDetails } = decryptBlock(block, roundKeys, shouldTrack);
-
-        // Add decrypted block to result
-        plainBytes.push(...decryptedBlock);
-
-        // Store round details only for first block
-        if (shouldTrack) {
-            allRoundDetails = roundDetails;
+        // Initialize block states
+        for (let i = 0; i < numBlocks; i++) {
+            const block = cipherBytes.slice(i * 16, (i + 1) * 16);
+            blockStates.push(bytesToStateMatrix(block));
         }
+
+        // Track complete plain text after round 14 (initial AddRoundKey)
+        for (let i = 0; i < numBlocks; i++) {
+            blockStates[i] = addRoundKey(blockStates[i], roundKeys[NUMBER_OF_ROUNDS]);
+        }
+        let fullPlain = [];
+        blockStates.forEach(state => fullPlain.push(...stateMatrixToBytes(state)));
+        completeCipherPerRound[NUMBER_OF_ROUNDS] = fullPlain;
+
+        // Process all main rounds (13 down to 1)
+        for (let round = NUMBER_OF_ROUNDS - 1; round >= 1; round--) {
+            for (let i = 0; i < numBlocks; i++) {
+                blockStates[i] = inverseShiftRows(blockStates[i]);
+                blockStates[i] = inverseSubstituteBytes(blockStates[i]);
+                blockStates[i] = addRoundKey(blockStates[i], roundKeys[round]);
+                blockStates[i] = inverseMixColumns(blockStates[i]);
+            }
+            // Collect complete plain text after this round
+            fullPlain = [];
+            blockStates.forEach(state => fullPlain.push(...stateMatrixToBytes(state)));
+            completeCipherPerRound[round] = fullPlain;
+        }
+
+        // Final round (0)
+        const finalRound = 0;
+        for (let i = 0; i < numBlocks; i++) {
+            blockStates[i] = inverseShiftRows(blockStates[i]);
+            blockStates[i] = inverseSubstituteBytes(blockStates[i]);
+            blockStates[i] = addRoundKey(blockStates[i], roundKeys[finalRound]);
+        }
+        // Collect complete plain text after final round
+        fullPlain = [];
+        blockStates.forEach(state => fullPlain.push(...stateMatrixToBytes(state)));
+        completeCipherPerRound[finalRound] = fullPlain;
+
+        // Set final plain bytes (with padding removed)
+        plainBytes = unpadData(fullPlain);
+    } else {
+        // Normal processing without tracking
+        const tempPlainBytes = [];
+        for (let i = 0; i < cipherBytes.length; i += 16) {
+            const block = cipherBytes.slice(i, i + 16);
+            const { decryptedBlock } = decryptBlock(block, roundKeys, false);
+            tempPlainBytes.push(...decryptedBlock);
+        }
+        plainBytes = unpadData(tempPlainBytes);
     }
 
-    // Remove padding
-    const unpaddedData = unpadData(plainBytes);
+    // Get round details for first block only (for state matrix visualization)
+    if (trackRounds) {
+        const firstBlock = cipherBytes.slice(0, 16);
+        const { roundDetails } = decryptBlock(firstBlock, roundKeys, true);
+        allRoundDetails = roundDetails;
+    }
 
     return {
-        plainBytes: unpaddedData,
+        plainBytes,
         roundDetails: allRoundDetails,
+        completeCipherPerRound,
         keyExpansion: {
             roundKeys: roundKeys.map(rk => formatStateMatrix(rk)),
             expansionDetails

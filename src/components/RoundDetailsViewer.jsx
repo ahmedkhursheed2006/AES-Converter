@@ -5,13 +5,22 @@ import './RoundDetailsViewer.css';
  * RoundDetailsViewer Component
  * 
  * Displays round-by-round details of the AES encryption/decryption process:
+ * - Complete cipher text after each round (for all blocks)
  * - Round keys from key expansion
  * - State transformations at each step
  * - Intermediate values for each round
  */
-function RoundDetailsViewer({ roundDetails, keyExpansion, mode }) {
+function RoundDetailsViewer({ roundDetails, keyExpansion, completeCipherPerRound, mode }) {
     const [expandedRounds, setExpandedRounds] = useState({});
     const [showKeyExpansion, setShowKeyExpansion] = useState(false);
+
+    // Helper function to format bytes to hex with spaces every 32 chars (2 blocks)
+    const formatCipherText = (bytes) => {
+        if (!bytes) return '';
+        const hex = bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+        // Add space every 32 characters (one block = 16 bytes = 32 hex chars)
+        return hex.match(/.{1,32}/g)?.join(' ') || hex;
+    };
 
     const toggleRound = (index) => {
         setExpandedRounds(prev => ({
@@ -99,6 +108,21 @@ function RoundDetailsViewer({ roundDetails, keyExpansion, mode }) {
                             </span>
                         </button>
 
+                        {/* Complete Cipher Text after this round */}
+                        {completeCipherPerRound && completeCipherPerRound[roundNum] && (
+                            <div className="complete-cipher-section">
+                                <div className="cipher-label">
+                                    📝 Complete {mode === 'encrypt' ? 'Cipher' : 'Plain'} Text After Round {roundNum}:
+                                </div>
+                                <div className="cipher-text-display mono-font">
+                                    {formatCipherText(completeCipherPerRound[roundNum])}
+                                </div>
+                                <div className="cipher-info">
+                                    {completeCipherPerRound[roundNum].length} bytes ({completeCipherPerRound[roundNum].length / 16} blocks)
+                                </div>
+                            </div>
+                        )}
+
                         {expandedRounds[roundNum] && (
                             <div className="round-steps">
                                 {steps.map((step, stepIndex) => (
@@ -108,7 +132,7 @@ function RoundDetailsViewer({ roundDetails, keyExpansion, mode }) {
                                         </div>
                                         <div className="step-content">
                                             <div className="state-matrix-container">
-                                                <div className="matrix-label">State Matrix:</div>
+                                                <div className="matrix-label">State Matrix (First Block):</div>
                                                 <pre className="state-matrix mono-font">{step.state}</pre>
                                             </div>
                                             {step.roundKey && (

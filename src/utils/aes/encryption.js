@@ -188,6 +188,7 @@ export function encryptBlock(block, roundKeys, trackRounds = false) {
  *   - cipherBytes: Encrypted data as byte array
  *   - roundDetails: Details of each round (if trackRounds is true)
  *   - keyExpansion: Details of key expansion
+ *   - completeCipherPerRound: Complete cipher text after each round (if trackRounds is true)
  */
 export function encryptText(plainBytes, key, trackRounds = false) {
     // Pad the data to a multiple of 16 bytes
@@ -199,30 +200,79 @@ export function encryptText(plainBytes, key, trackRounds = false) {
     // Array to hold all cipher blocks
     const cipherBytes = [];
 
-    // Array to hold round details for all blocks (only track first block to avoid overwhelming data)
+    // Array to hold round details for first block
     let allRoundDetails = [];
 
-    // Process each 16-byte block
-    for (let i = 0; i < paddedData.length; i += 16) {
-        const block = paddedData.slice(i, i + 16);
+    // Array to track complete cipher text after each round (for all blocks)
+    const completeCipherPerRound = trackRounds ? {} : null;
 
-        // Only track rounds for the first block to keep data manageable
-        const shouldTrack = trackRounds && (i === 0);
+    if (trackRounds) {
+        // Process all blocks round by round to track complete cipher text
+        const numBlocks = paddedData.length / 16;
+        const blockStates = [];
 
-        const { encryptedBlock, roundDetails } = encryptBlock(block, roundKeys, shouldTrack);
-
-        // Add encrypted block to result
-        cipherBytes.push(...encryptedBlock);
-
-        // Store round details only for first block
-        if (shouldTrack) {
-            allRoundDetails = roundDetails;
+        // Initialize block states
+        for (let i = 0; i < numBlocks; i++) {
+            const block = paddedData.slice(i * 16, (i + 1) * 16);
+            blockStates.push(bytesToStateMatrix(block));
         }
+
+        // Track complete cipher text after round 0 (initial AddRoundKey)
+        for (let i = 0; i < numBlocks; i++) {
+            blockStates[i] = addRoundKey(blockStates[i], roundKeys[0]);
+        }
+        let fullCipher = [];
+        blockStates.forEach(state => fullCipher.push(...stateMatrixToBytes(state)));
+        completeCipherPerRound[0] = fullCipher;
+
+        // Process all main rounds (1 to 13)
+        for (let round = 1; round < NUMBER_OF_ROUNDS; round++) {
+            for (let i = 0; i < numBlocks; i++) {
+                blockStates[i] = substituteBytes(blockStates[i]);
+                blockStates[i] = shiftRows(blockStates[i]);
+                blockStates[i] = mixColumns(blockStates[i]);
+                blockStates[i] = addRoundKey(blockStates[i], roundKeys[round]);
+            }
+            // Collect complete cipher text after this round
+            fullCipher = [];
+            blockStates.forEach(state => fullCipher.push(...stateMatrixToBytes(state)));
+            completeCipherPerRound[round] = fullCipher;
+        }
+
+        // Final round (14)
+        const finalRound = NUMBER_OF_ROUNDS;
+        for (let i = 0; i < numBlocks; i++) {
+            blockStates[i] = substituteBytes(blockStates[i]);
+            blockStates[i] = shiftRows(blockStates[i]);
+            blockStates[i] = addRoundKey(blockStates[i], roundKeys[finalRound]);
+        }
+        // Collect complete cipher text after final round
+        fullCipher = [];
+        blockStates.forEach(state => fullCipher.push(...stateMatrixToBytes(state)));
+        completeCipherPerRound[finalRound] = fullCipher;
+
+        // Set final cipher bytes
+        cipherBytes.push(...fullCipher);
+    } else {
+        // Normal processing without tracking
+        for (let i = 0; i < paddedData.length; i += 16) {
+            const block = paddedData.slice(i, i + 16);
+            const { encryptedBlock } = encryptBlock(block, roundKeys, false);
+            cipherBytes.push(...encryptedBlock);
+        }
+    }
+
+    // Get round details for first block only (for state matrix visualization)
+    if (trackRounds) {
+        const firstBlock = paddedData.slice(0, 16);
+        const { roundDetails } = encryptBlock(firstBlock, roundKeys, true);
+        allRoundDetails = roundDetails;
     }
 
     return {
         cipherBytes,
         roundDetails: allRoundDetails,
+        completeCipherPerRound,
         keyExpansion: {
             roundKeys: roundKeys.map(rk => formatStateMatrix(rk)),
             expansionDetails
