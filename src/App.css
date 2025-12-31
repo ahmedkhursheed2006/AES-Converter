@@ -1,0 +1,88 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-lg);
+}
+
+/* ==================================================================================== 
+   HEADER 
+   ==================================================================================== */
+
+.app-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.app-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* ==================================================================================== 
+   MAIN CONTENT 
+   ==================================================================================== */
+
+.app-main {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ==================================================================================== 
+   ERROR MESSAGE 
+   ==================================================================================== */
+
+.error-message {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  color: var(--color-error);
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==================================================================================== 
+   FOOTER 
+   ==================================================================================== */
+
+.app-footer {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  margin-top: var(--spacing-2xl);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ==================================================================================== 
+   RESPONSIVE 
+   ==================================================================================== */
+
+@media (max-width: 768px) {
+  .app {
+    padding: var(--spacing-md);
+  }
+
+  .app-header h1 {
+    font-size: 2rem;
+  }
+
+  .app-subtitle {
+    font-size: 0.95rem;
+  }
+}

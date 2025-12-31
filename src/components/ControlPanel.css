@@ -1,0 +1,129 @@
+.control-panel {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+/* ==================================================================================== 
+   MODE BUTTONS 
+   ==================================================================================== */
+
+.mode-button {
+    padding: var(--spacing-md) var(--spacing-xl);
+    background: var(--color-bg-tertiary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    outline: none;
+}
+
+.mode-button:hover {
+    background: var(--color-surface);
+    border-color: var(--color-accent-1);
+    color: var(--color-text-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-button.active {
+    background: linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2));
+    border-color: var(--color-accent-2);
+    color: white;
+    box-shadow: var(--shadow-glow);
+}
+
+.mode-icon {
+    font-size: 1.2rem;
+}
+
+/* ==================================================================================== 
+   TOGGLE AND CLEAR BUTTONS 
+   ==================================================================================== */
+
+.toggle-button,
+.clear-button {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    outline: none;
+}
+
+.toggle-button {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.toggle-button:hover {
+    background: var(--color-surface);
+    border-color: var(--color-accent-2);
+    color: var(--color-text-primary);
+}
+
+.toggle-button.active {
+    background: var(--color-accent-2);
+    border-color: var(--color-accent-2);
+    color: white;
+}
+
+.clear-button {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.clear-button:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+.toggle-icon,
+.clear-icon {
+    font-size: 1.1rem;
+}
+
+/* ==================================================================================== 
+   RESPONSIVE 
+   ==================================================================================== */
+
+@media (max-width: 768px) {
+    .control-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-group {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .mode-button,
+    .toggle-button,
+    .clear-button {
+        flex: 1;
+        justify-content: center;
+    }
+}
