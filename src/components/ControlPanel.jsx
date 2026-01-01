@@ -17,7 +17,6 @@ function ControlPanel({ mode, onModeSwitch, showRoundDetails, onToggleRoundDetai
                     className={`mode-button ${mode === 'encrypt' ? 'active' : ''}`}
                     onClick={onModeSwitch}
                 >
-                    <span className="mode-icon">🔒</span>
                     <span className="mode-text">Encrypt</span>
                 </button>
 
@@ -25,7 +24,6 @@ function ControlPanel({ mode, onModeSwitch, showRoundDetails, onToggleRoundDetai
                     className={`mode-button ${mode === 'decrypt' ? 'active' : ''}`}
                     onClick={onModeSwitch}
                 >
-                    <span className="mode-icon">🔓</span>
                     <span className="mode-text">Decrypt</span>
                 </button>
             </div>
@@ -36,7 +34,6 @@ function ControlPanel({ mode, onModeSwitch, showRoundDetails, onToggleRoundDetai
                     className={`toggle-button ${showRoundDetails ? 'active' : ''}`}
                     onClick={onToggleRoundDetails}
                 >
-                    <span className="toggle-icon">📊</span>
                     <span className="toggle-text">
                         {showRoundDetails ? 'Hide' : 'Show'} Round Details
                     </span>
@@ -47,7 +44,6 @@ function ControlPanel({ mode, onModeSwitch, showRoundDetails, onToggleRoundDetai
                     className="clear-button"
                     onClick={onClear}
                 >
-                    <span className="clear-icon">🗑️</span>
                     <span className="clear-text">Clear All</span>
                 </button>
             </div>
