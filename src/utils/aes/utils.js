@@ -70,12 +70,12 @@ export function hexToBytes(hexString) {
 }
 
 // ====================================================================================
-// PADDING (PKCS#7)
+// PADDING
 // ====================================================================================
 
 /**
- * Add PKCS#7 padding to data
- * PKCS#7 padding adds N bytes of value N to make the data a multiple of the block size
+ * Add padding to data
+ * Padding adds N bytes of value N to make the data a multiple of the block size
  * For example, if 5 bytes of padding are needed, add five bytes each with value 0x05
  * 
  * @param {number[]} data - Data to pad
@@ -97,7 +97,7 @@ export function padData(data) {
 }
 
 /**
- * Remove PKCS#7 padding from data
+ * Remove padding from data
  * Reads the last byte to determine how many padding bytes to remove
  * 
  * @param {number[]} data - Padded data

@@ -19,11 +19,11 @@ function App() {
   const [mode, setMode] = useState('encrypt'); // 'encrypt' or 'decrypt'
 
   // State for input/output
-  const [plainText, setPlainText] = useState('Sir Niaz will give us A Grade');
+  const [plainText, setPlainText] = useState('Dummy Text');
   const [cipherText, setCipherText] = useState('');
 
   // State for key
-  const [passphrase, setPassphrase] = useState('Sir Niaz is Love');
+  const [passphrase, setPassphrase] = useState('Dummy Passphrase');
   const [key, setKey] = useState(null);
 
   // State for round details
