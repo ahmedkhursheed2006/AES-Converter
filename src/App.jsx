@@ -171,10 +171,7 @@ function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="app-footer">
-        <p>Educational Implementation of AES-256 • Not for Production Use</p>
-      </footer>
+
     </div>
   );
 }
