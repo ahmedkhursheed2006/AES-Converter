@@ -10,7 +10,6 @@ function KeyInput({ passphrase, setPassphrase, keyHex }) {
     return (
         <div className="key-input-container glass-effect">
             <h2 className="key-input-title">
-                <span className="icon">🔑</span>
                 Encryption Key
             </h2>
 
