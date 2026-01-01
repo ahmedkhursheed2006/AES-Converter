@@ -57,7 +57,6 @@ function RoundDetailsViewer({ roundDetails, keyExpansion, completeCipherPerRound
         <div className="round-details-container glass-effect">
             <div className="round-details-header">
                 <h2 className="round-details-title">
-                    <span className="icon">📊</span>
                     Round-by-Round Details ({mode === 'encrypt' ? 'Encryption' : 'Decryption'})
                 </h2>
                 <div className="round-details-controls">
@@ -112,7 +111,7 @@ function RoundDetailsViewer({ roundDetails, keyExpansion, completeCipherPerRound
                         {completeCipherPerRound && completeCipherPerRound[roundNum] && (
                             <div className="complete-cipher-section">
                                 <div className="cipher-label">
-                                    📝 Complete {mode === 'encrypt' ? 'Cipher' : 'Plain'} Text After Round {roundNum}:
+                                    Complete {mode === 'encrypt' ? 'Cipher' : 'Plain'} Text After Round {roundNum}:
                                 </div>
                                 <div className="cipher-text-display mono-font">
                                     {formatCipherText(completeCipherPerRound[roundNum])}

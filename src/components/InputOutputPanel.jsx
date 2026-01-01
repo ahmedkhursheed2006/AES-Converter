@@ -16,7 +16,7 @@ function InputOutputPanel({ mode, plainText, setPlainText, cipherText, setCipher
             <div className="panel glass-effect">
                 <div className="panel-header">
                     <h3 className="panel-title">
-                        {mode === 'encrypt' ? '📝 Plain Text' : '🔐 Cipher Text (Hex)'}
+                        {mode === 'encrypt' ? 'Plain Text' : 'Cipher Text (Hex)'}
                     </h3>
                 </div>
                 <div className="panel-body">
@@ -40,7 +40,7 @@ function InputOutputPanel({ mode, plainText, setPlainText, cipherText, setCipher
             <div className="panel glass-effect">
                 <div className="panel-header">
                     <h3 className="panel-title">
-                        {mode === 'encrypt' ? '🔐 Cipher Text (Hex)' : '📝 Plain Text'}
+                        {mode === 'encrypt' ? 'Cipher Text (Hex)' : 'Plain Text'}
                     </h3>
                 </div>
                 <div className="panel-body">
